@@ -1,6 +1,8 @@
 # Next.js Full Stack Framework Dokümanı
 
-Bu repo, GitHub Pages'te statik olarak yayınlanabilir tek sayfalık bir doküman içerir. Doküman Next.js tam yığın yaklaşımını, Prisma/ORM kullanımı, API route tasarımı, Swagger/OpenAPI entegrasyonu, auth seçenekleri, Docker build ve dosya tabanlı yönlendirme gibi konuları kapsar.
+Bu repo, GitHub Pages'te statik olarak yayınlanabilir tek sayfalık bir doküman içerir. 
+live at https://slymanmrcan.github.io/Next-Fullstack-Framework-Doc/
+Doküman Next.js tam yığın yaklaşımını, Prisma/ORM kullanımı, API route tasarımı, Swagger/OpenAPI entegrasyonu, auth seçenekleri, Docker build ve dosya tabanlı yönlendirme gibi konuları kapsar.
 
 ## İçerik
 - `index.html`: Doküman sayfası (koyu tema, menülü, bölüm bölüm).
