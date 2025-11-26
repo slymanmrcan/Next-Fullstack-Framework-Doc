@@ -6,14 +6,14 @@
   <title>Next.js Full Stack Framework Dokümanı</title>
   <style>
     :root {
-      --bg: #0d1117;
-      --bg-panel: #111827;
-      --fg: #e5e7eb;
-      --muted: #9ca3af;
-      --accent: #22d3ee;
+      --bg: #0b1220;
+      --bg-panel: #0f172a;
+      --fg: #e7ecf5;
+      --muted: #9fb3c8;
+      --accent: #38bdf8;
       --accent-2: #a855f7;
-      --border: #1f2937;
-      --code: #0b172a;
+      --border: #1e293b;
+      --code: #0a162c;
     }
     * {
       box-sizing: border-box;
@@ -21,8 +21,8 @@
     body {
       margin: 0;
       font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-      background: radial-gradient(circle at 20% 20%, rgba(34,211,238,0.08), transparent 25%),
-                  radial-gradient(circle at 80% 0%, rgba(168,85,247,0.08), transparent 30%),
+      background: radial-gradient(circle at 20% 20%, rgba(56,189,248,0.10), transparent 25%),
+                  radial-gradient(circle at 80% 0%, rgba(168,85,247,0.10), transparent 30%),
                   var(--bg);
       color: var(--fg);
       min-height: 100vh;
@@ -31,21 +31,25 @@
     }
     header {
       grid-column: 1 / -1;
-      padding: 24px 32px 8px;
+      padding: 28px 32px 12px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(135deg, rgba(34,211,238,0.12), rgba(168,85,247,0.06));
-      backdrop-filter: blur(6px);
+      background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(168,85,247,0.08));
+      backdrop-filter: blur(8px);
+      text-align: center;
+    }
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
     }
     header h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
+      margin: 0 0 10px;
+      font-size: 30px;
       letter-spacing: -0.02em;
     }
     header p {
       margin: 0;
       color: var(--muted);
-      max-width: 720px;
-      line-height: 1.5;
+      line-height: 1.55;
     }
     nav {
       position: sticky;
@@ -196,12 +200,14 @@
 </head>
 <body>
   <header>
-    <h1>Next.js Full Stack Framework Dokümanı</h1>
-    <p>
-      Bu sayfa Next.js ile tam yığın (SSR + API) geliştirme yolunu özetler.
-      Prisma ile veri erişimi, API route tasarımı, Swagger/OpenAPI entegrasyonu ve
-      gelecekte eklenecek Node.js/Express parçalarını menüden parça parça okuyabilirsiniz.
-    </p>
+    <div class="header-inner">
+      <h1>Next.js Full Stack Framework Dokümanı</h1>
+      <p>
+        Bu sayfa Next.js ile tam yığın (SSR + API) geliştirme yolunu özetler.
+        Prisma ile veri erişimi, API route tasarımı, Swagger/OpenAPI entegrasyonu ve
+        gelecekte eklenecek Node.js/Express parçalarını menüden parça parça okuyabilirsiniz.
+      </p>
+    </div>
   </header>
 
   <nav aria-label="İçindekiler">
