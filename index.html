@@ -244,46 +244,6 @@
       </div>
     </section>
 
-    <section id="docker">
-      <h2>Docker Build (Prisma ve Alternatif ORM'lerle)</h2>
-      <p>Multi-stage build ile Prisma gibi generate adımı olan ORM'ler için örnek. Diesel/TypeORM/Drizzle gibi araçlar da benzer yapıyı kullanabilir.</p>
-      <pre><code># Dockerfile
-FROM node:20-alpine AS deps
-WORKDIR /app
-RUN apk add --no-cache libc6-compat openssl
-COPY package*.json ./
-RUN npm ci
-
-FROM node:20-alpine AS builder
-WORKDIR /app
-RUN apk add --no-cache libc6-compat openssl
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-# Prisma özel: generate (schema.prisma okur) ve gerekiyorsa migrate
-RUN npx prisma generate
-# Eğer build sırasında DB erişimi yoksa migrate'i CI'da çalıştırın
-RUN npm run build
-
-FROM node:20-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
-COPY --from=builder /app/next.config.js ./next.config.js
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-USER nextjs
-EXPOSE 3000
-CMD ["node", "server.js"]</code></pre>
-      <p>
-        <strong>Notlar:</strong> Standalone çıktıda <code>server.js</code> Next.js tarafından üretilir.
-        Prisma için <code>.prisma</code> klasörünü de kopyalamak gerekir. Drizzle/TypeORM gibi
-        alternatiflerde generate adımlarını builder aşamasında çalıştırın, runtime'da sadece gerekli
-        dosyaları kopyalayın.
-      </p>
-    </section>
-
     <section id="yapilacaklar">
       <h2>Ne Yapılır / Ne Yapılmaz (Asgari Hijyen)</h2>
       <div class="grid">
@@ -296,6 +256,10 @@ CMD ["node", "server.js"]</code></pre>
             <li>Observability: request-id, log context, basic metrics</li>
             <li>CORS & rate limit: middleware ile erken reddet</li>
           </ul>
+          <p style="margin:8px 0 0;color:var(--muted);">
+            Örnek akış: <code>src/app/(public)/page.tsx</code> (landing), <code>src/app/api/posts/route.ts</code> (CRUD API),
+            <code>src/app/dashboard/page.tsx</code> (korumalı panel) hepsi tek repo ve dosya tabanlı routing ile.
+          </p>
         </div>
         <div class="card">
           <strong>Yapılmayacaklar</strong>
@@ -338,6 +302,13 @@ CMD ["node", "server.js"]</code></pre>
           </ul>
         </div>
       </div>
+      <p style="margin-top:16px;color:var(--muted);">
+        Başlangıç komutu (App Router, TypeScript, src dizini, alias):
+      </p>
+      <pre><code>npx create-next-app@latest --typescript --eslint --app --src-dir --import-alias "@/*"</code></pre>
+      <p style="margin-top:8px;color:var(--muted);">
+        Dosya sistemi yönlendirme: UI ve API aynı <code>app/</code> altında segment bazlıdır; ayrı router dosyasına gerek yoktur.
+      </p>
     </section>
 
     <section id="fs-routing">
@@ -594,6 +565,46 @@ export default function SwaggerPage() {
           </ul>
         </div>
       </div>
+    </section>
+
+    <section id="docker">
+      <h2>Docker Build (Prisma ve Alternatif ORM'lerle)</h2>
+      <p>Multi-stage build ile Prisma gibi generate adımı olan ORM'ler için örnek. Diesel/TypeORM/Drizzle gibi araçlar da benzer yapıyı kullanabilir.</p>
+      <pre><code># Dockerfile
+FROM node:20-alpine AS deps
+WORKDIR /app
+RUN apk add --no-cache libc6-compat openssl
+COPY package*.json ./
+RUN npm ci
+
+FROM node:20-alpine AS builder
+WORKDIR /app
+RUN apk add --no-cache libc6-compat openssl
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+# Prisma özel: generate (schema.prisma okur) ve gerekiyorsa migrate
+RUN npx prisma generate
+# Eğer build sırasında DB erişimi yoksa migrate'i CI'da çalıştırın
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+COPY --from=builder /app/next.config.js ./next.config.js
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+USER nextjs
+EXPOSE 3000
+CMD ["node", "server.js"]</code></pre>
+      <p>
+        <strong>Notlar:</strong> Standalone çıktıda <code>server.js</code> Next.js tarafından üretilir.
+        Prisma için <code>.prisma</code> klasörünü de kopyalamak gerekir. Drizzle/TypeORM gibi
+        alternatiflerde generate adımlarını builder aşamasında çalıştırın, runtime'da sadece gerekli
+        dosyaları kopyalayın.
+      </p>
     </section>
 
     <section id="deploy">
