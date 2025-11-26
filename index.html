@@ -290,6 +290,7 @@
             <li><code>npx create-next-app@latest --typescript --eslint --app --src-dir --import-alias "@/*"</code></li>
             <li>Varsayılan: Tailwind opsiyonel, jest/eslint hazır</li>
             <li>Pages yerine App Router seçili (full-stack için ideal)</li>
+            <li>UI eklemek için: <code>npm i tailwindcss@latest postcss autoprefixer</code> ve <code>npx tailwindcss init -p</code></li>
           </ul>
         </div>
         <div class="card">
@@ -298,6 +299,8 @@
             <li>Next + tRPC (veya simple API route) + Prisma + NextAuth</li>
             <li>Tailwind + Shadcn UI eklenebilir</li>
             <li>Edge uyumu için tRPC handler'ı Node runtime'da tut</li>
+            <li>Kurulum: <code>npx create-next-app@latest --typescript --eslint --app --src-dir --import-alias "@/*"</code> + <code>npm i @trpc/server @trpc/client @tanstack/react-query @trpc/react-query zod</code></li>
+            <li>Prisma/NextAuth ekle: <code>npm i prisma @prisma/client next-auth</code> ve <code>npx prisma init</code></li>
           </ul>
         </div>
         <div class="card">
@@ -306,6 +309,7 @@
             <li>Statik export için: MDX + Contentlayer / next-mdx-remote</li>
             <li>Swagger UI'yı <code>/docs/swagger</code> route'unda sun</li>
             <li>Pages/CI: <code>next export</code> + GitHub Pages</li>
+            <li>Kurulum: <code>npm i next-mdx-remote gray-matter</code> veya <code>npm i contentlayer next-contentlayer</code></li>
           </ul>
         </div>
         <div class="card">
@@ -314,6 +318,7 @@
             <li>CI: lint + test + <code>next build</code> + <code>next export</code></li>
             <li>Docker: multi-stage (deps/builder/runner) + Prisma generate</li>
             <li>Env şeması: <code>zod</code> + <code>dotenv-flow</code> veya <code>@t3-oss/env-nextjs</code></li>
+            <li>Kurulum: <code>npm i -D eslint prettier</code> + <code>npm i prisma @prisma/client</code> + Dockerfile'ı ekle</li>
           </ul>
         </div>
       </div>
