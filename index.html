@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Next.js Full Stack Framework Dokümanı</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-panel: #111827;
+      --fg: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #22d3ee;
+      --accent-2: #a855f7;
+      --border: #1f2937;
+      --code: #0b172a;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(34,211,238,0.08), transparent 25%),
+                  radial-gradient(circle at 80% 0%, rgba(168,85,247,0.08), transparent 30%),
+                  var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+    }
+    header {
+      grid-column: 1 / -1;
+      padding: 24px 32px 8px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(34,211,238,0.12), rgba(168,85,247,0.06));
+      backdrop-filter: blur(6px);
+    }
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+    }
+    header p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.5;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
+      padding: 24px 24px 48px;
+      border-right: 1px solid var(--border);
+      background: rgba(13,17,23,0.85);
+      backdrop-filter: blur(10px);
+    }
+    nav h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+    }
+    nav a {
+      display: block;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--fg);
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
+      font-weight: 600;
+    }
+    nav a:hover,
+    nav a:focus {
+      border-color: rgba(34,211,238,0.35);
+      background: linear-gradient(135deg, rgba(34,211,238,0.14), rgba(168,85,247,0.09));
+      outline: none;
+    }
+    nav a.active {
+      border-color: var(--accent);
+      background: rgba(34,211,238,0.12);
+      color: #fff;
+    }
+    main {
+      padding: 24px 32px 48px;
+      max-width: 1080px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    section {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+    }
+    p {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 0;
+    }
+    ul {
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      margin: 0 8px 8px 0;
+      border-radius: 999px;
+      background: rgba(34,211,238,0.12);
+      color: #c5f6ff;
+      border: 1px solid rgba(34,211,238,0.35);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    code {
+      font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      background: var(--code);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    pre {
+      background: var(--code);
+      padding: 16px;
+      border-radius: 12px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      color: #cdd7f6;
+      line-height: 1.5;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      padding: 16px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(34,211,238,0.08), rgba(12, 18, 28, 0.9));
+      border: 1px solid var(--border);
+    }
+    .tagged {
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(34,211,238,0.18), rgba(168,85,247,0.14));
+      border: 1px solid rgba(34,211,238,0.35);
+      color: #e0f2fe;
+      text-decoration: none;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+    @media (max-width: 1024px) {
+      body {
+        grid-template-columns: 1fr;
+      }
+      nav {
+        position: relative;
+        height: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      nav h2 {
+        width: 100%;
+      }
+      nav a {
+        flex: 1 1 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Next.js Full Stack Framework Dokümanı</h1>
+    <p>
+      Bu sayfa Next.js ile tam yığın (SSR + API) geliştirme yolunu özetler.
+      Prisma ile veri erişimi, API route tasarımı, Swagger/OpenAPI entegrasyonu ve
+      gelecekte eklenecek Node.js/Express parçalarını menüden parça parça okuyabilirsiniz.
+    </p>
+  </header>
+
+  <nav aria-label="İçindekiler">
+    <h2>Menü</h2>
+    <a href="#giris" class="active">Giriş</a>
+    <a href="#yapilacaklar">Ne Yapılır / Ne Yapılmaz</a>
+    <a href="#mimari">Mimari Yapı</a>
+    <a href="#fs-routing">Dosya Sistemi & Routing</a>
+    <a href="#lifecycle">Lifecycle & Middleware</a>
+    <a href="#prisma">Prisma & API</a>
+    <a href="#auth">Kimlik Doğrulama</a>
+    <a href="#endpoint">Endpoint Tanımı</a>
+    <a href="#swagger">Swagger / OpenAPI</a>
+    <a href="#veritabani">Veritabanı Seçenekleri</a>
+    <a href="#docker">Docker Build</a>
+    <a href="#deploy">GitHub Pages Yayını</a>
+    <a href="#node-express">Node.js / Express (sonraki)</a>
+  </nav>
+
+  <main>
+    <section id="giris">
+      <h2>Giriş</h2>
+      <p>
+        Next.js, React tabanlı güçlü bir tam yığın çerçevedir. Tek repo içinde hem UI hem API
+        barındırır, TypeScript ve dosya tabanlı yönlendirme ile hızlı geliştirme sağlar.
+        Aşağıdaki bölümler parçalı ilerlemeniz için hazırlanmıştır.
+      </p>
+      <div class="tagged">
+        <span class="pill">App Router</span>
+        <span class="pill">Edge/Node Runtimes</span>
+        <span class="pill">Prisma ORM</span>
+        <span class="pill">Swagger/OpenAPI</span>
+        <span class="pill">PostgreSQL</span>
+      </div>
+    </section>
+
+    <section id="docker">
+      <h2>Docker Build (Prisma ve Alternatif ORM'lerle)</h2>
+      <p>Multi-stage build ile Prisma gibi generate adımı olan ORM'ler için örnek. Diesel/TypeORM/Drizzle gibi araçlar da benzer yapıyı kullanabilir.</p>
+      <pre><code># Dockerfile
+FROM node:20-alpine AS deps
+WORKDIR /app
+RUN apk add --no-cache libc6-compat openssl
+COPY package*.json ./
+RUN npm ci
+
+FROM node:20-alpine AS builder
+WORKDIR /app
+RUN apk add --no-cache libc6-compat openssl
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+# Prisma özel: generate (schema.prisma okur) ve gerekiyorsa migrate
+RUN npx prisma generate
+# Eğer build sırasında DB erişimi yoksa migrate'i CI'da çalıştırın
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+COPY --from=builder /app/next.config.js ./next.config.js
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+USER nextjs
+EXPOSE 3000
+CMD ["node", "server.js"]</code></pre>
+      <p>
+        <strong>Notlar:</strong> Standalone çıktıda <code>server.js</code> Next.js tarafından üretilir.
+        Prisma için <code>.prisma</code> klasörünü de kopyalamak gerekir. Drizzle/TypeORM gibi
+        alternatiflerde generate adımlarını builder aşamasında çalıştırın, runtime'da sadece gerekli
+        dosyaları kopyalayın.
+      </p>
+    </section>
+
+    <section id="yapilacaklar">
+      <h2>Ne Yapılır / Ne Yapılmaz (Asgari Hijyen)</h2>
+      <div class="grid">
+        <div class="card">
+          <strong>Yapılacaklar</strong>
+          <ul>
+            <li>.env şemasını zorunlu kıl (zod/env-safe)</li>
+            <li>API girişlerini schema validate et (zod / yup)</li>
+            <li>Prisma Client'ı tekil instance ile paylaş</li>
+            <li>Observability: request-id, log context, basic metrics</li>
+            <li>CORS & rate limit: middleware ile erken reddet</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Yapılmayacaklar</strong>
+          <ul>
+            <li>Client component içinde direkt env veya secret okumak</li>
+            <li>Schema'sız body parse (raw JSON → DB)</li>
+            <li>API içinde blocking uzun işler (queue'ya offload et)</li>
+            <li>Her istek için yeni PrismaClient açmak</li>
+            <li>Edge runtime'da native driver kullanmak (destek yoksa)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="mimari">
+      <h2>Mimari Yapı</h2>
+      <div class="grid">
+        <div class="card">
+          <strong>src/app</strong>
+          <ul>
+            <li>UI route'ları (server component + client component)</li>
+            <li>API route'ları (route.js / route.ts)</li>
+            <li>Segment bazlı layout ve metadata</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>src/lib</strong>
+          <ul>
+            <li>Prisma client, yardımcı fonksiyonlar</li>
+            <li>DTO/validator (zod/yup) tanımları</li>
+            <li>Swagger/OpenAPI generator ayarları</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>config & devops</strong>
+          <ul>
+            <li>env şeması (.env, .env.local)</li>
+            <li>CI/CD (GitHub Actions) + Pages publish</li>
+            <li>Lint, format, test komutları</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="fs-routing">
+      <h2>Dosya Sistemi & Routing (Next.js App Router)</h2>
+      <p>
+        Next.js yönlendirme dosya sistemi üzerinden çalışır. Klasörler route segment'i, dosyalar
+        içerik/handler'ı temsil eder. SSR/SSG, Streaming ve Route Handlers tek yapıda birleşir.
+      </p>
+      <div class="grid">
+        <div class="card">
+          <strong>Temel Dosyalar</strong>
+          <ul>
+            <li><code>page.tsx</code>: Segment içeriği (server component varsayılan)</li>
+            <li><code>layout.tsx</code>: Segment layout'u, children'ları sarmalar</li>
+            <li><code>loading.tsx</code>: Suspense fallback (streaming için)</li>
+            <li><code>error.tsx</code> / <code>not-found.tsx</code>: Hata/404 sınırları</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>API & Data</strong>
+          <ul>
+            <li><code>route.ts</code>: HTTP handler (GET/POST/PUT/DELETE)</li>
+            <li><code>Server Actions</code>: <code>"use server"</code> ile form/fetch sonrası kod</li>
+            <li>Cache: <code>fetch</code> cache-policy, <code>revalidate</code>, <code>no-store</code></li>
+            <li>Edge vs Node runtime: <code>export const runtime = "edge"</code> / <code>"nodejs"</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Dinamik & Paralel Segmentler</strong>
+          <ul>
+            <li><code>[id]</code>, <code>[...slug]</code>, <code>[[...slug]]</code> dinamik segmentler</li>
+            <li>Paralel route: <code>@modal</code>, <code>@feed</code> gibi adlandırılmış slot'lar</li>
+            <li>Intercepting route: <code>(.)</code>, <code>(..)</code>, <code>(..)(..)</code> prefiksleri</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Render Pipeline</strong>
+          <ul>
+            <li>RSC → React Server Components + Client boundary'ler</li>
+            <li>SSR/Streaming: <code>loading.tsx</code> ile kısmi render</li>
+            <li>Static Export: <code>generateStaticParams</code>, <code>dynamic = "error"</code> / <code>"force-static"</code></li>
+            <li>Metadata: <code>export const metadata</code> veya <code>generateMetadata</code></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="lifecycle">
+      <h2>Lifecycle & Middleware</h2>
+      <p>
+        Next.js App Router'da istek akışı: Middleware → Route Handler → Response. Erken aşamada
+        kimlik doğrulama, yerelleştirme, CORS, rate limit işlemleri yapılır.
+      </p>
+      <pre><code>// middleware.ts
+import { NextResponse } from "next/server";
+
+export const config = {
+  matcher: ["/api/:path*"], // sadece API'lara uygula
+};
+
+export async function middleware(request: Request) {
+  const origin = request.headers.get("origin") || "";
+  if (!origin.includes("example.com")) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
+
+  // Basit rate limit örneği (KV/cache entegrasyonu önerilir)
+  const response = NextResponse.next();
+  response.headers.set("x-app-version", process.env.APP_VERSION || "dev");
+  return response;
+}</code></pre>
+      <p>
+        <strong>Lifecycle notları:</strong> Route handler içinde validation → service → repository akışı
+        koru. Sunucu component'lerde fetch yerine server action kullanırken cache/prefetch kurallarını
+        netleştir. Edge seçilecekse third-party modüllerin uyumunu kontrol et.
+      </p>
+    </section>
+
+    <section id="prisma">
+      <h2>Prisma & API Route Kullanımı</h2>
+      <p>
+        Prisma, Next.js içinde veritabanına tip güvenli erişim sağlar. Next.js API route'ları
+        (App Router altında <code>route.ts</code>) serverless/edge ortamında çalışabilir.
+      </p>
+      <pre><code>npm install prisma @prisma/client
+npx prisma init --datasource-provider postgresql
+
+// src/lib/prisma.ts
+import { PrismaClient } from "@prisma/client";
+
+const globalForPrisma = global as unknown as { prisma: PrismaClient | undefined };
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    log: ["query", "error", "warn"],
+  });
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;</code></pre>
+      <p>
+        Ortak <code>prisma</code> örneğini import ederek API route'larda kullanın. Edge runtime
+        planlanıyorsa Prisma'nın Data Proxy veya Accelerate desteği değerlendirilmeli.
+      </p>
+    </section>
+
+    <section id="auth">
+      <h2>Kimlik Doğrulama & Yetkilendirme</h2>
+      <p>Next.js App Router için hafif/ağır seçenekler. Token yaşam döngüsü ve güvenlik notları dahil.</p>
+      <div class="grid">
+        <div class="card">
+          <strong>NextAuth.js (Önerilen)</strong>
+          <ul>
+            <li>Credential, OAuth (Google/GitHub), Email magic link</li>
+            <li>Route Handler uyumlu: <code>auth.ts</code> + server actions</li>
+            <li>Session: JWT (stateless) veya DB-backed</li>
+            <li>Middleware: <code>auth((req) =&gt; ...)</code> ile guard</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>JWT (Custom)</strong>
+          <ul>
+            <li>Header: <code>Authorization: Bearer &lt;token&gt;</code></li>
+            <li>İmzalama: HS256 (shared secret) veya RS256 (keypair)</li>
+            <li>Claims: <code>sub</code>, <code>exp</code>, <code>scope</code>, <code>tenant</code></li>
+            <li>Rotation + refresh token; <code>jti</code> ile blacklist desteği</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Session Cookie</strong>
+          <ul>
+            <li>HttpOnly, Secure, SameSite=Lax/Strict; kısa TTL</li>
+            <li>CSRF koruması: çift cookie (token + header)</li>
+            <li>Stateful store: Redis veya DB</li>
+            <li>Edge uyumu için cookie boyutunu küçük tut</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>AuthZ (Yetki)</strong>
+          <ul>
+            <li>Role/Scope tablosu: <code>user_roles</code>, <code>permissions</code></li>
+            <li>Route guard: middleware'de role check; handler içinde iş kuralı</li>
+            <li>Domain-driven: policy fonksiyonları (<code>canEditPost(user, post)</code>)</li>
+            <li>Audit log: kim, ne zaman, hangi kaynağa erişti</li>
+          </ul>
+        </div>
+      </div>
+      <pre><code>// middleware.ts (auth guard örneği)
+import { NextResponse } from "next/server";
+import { verifyJwt } from "@/lib/auth";
+
+export const config = { matcher: ["/api/secure/:path*"] };
+
+export async function middleware(request: Request) {
+  const token = request.headers.get("authorization")?.replace("Bearer ", "");
+  if (!token) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  const payload = await verifyJwt(token); // exp, scope kontrolü
+  if (!payload) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+
+  const res = NextResponse.next();
+  res.headers.set("x-user-id", payload.sub || "");
+  return res;
+}</code></pre>
+    </section>
+
+    <section id="endpoint">
+      <h2>Endpoint Tanımı (App Router)</h2>
+      <p>Basit CRUD için <code>POST</code> ve <code>GET</code> örneği:</p>
+      <pre><code>// src/app/api/posts/route.ts
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+
+export async function GET() {
+  const posts = await prisma.post.findMany({ orderBy: { createdAt: "desc" } });
+  return NextResponse.json(posts);
+}
+
+export async function POST(request: Request) {
+  const body = await request.json();
+  const post = await prisma.post.create({ data: body });
+  return NextResponse.json(post, { status: 201 });
+}</code></pre>
+      <p>
+        Daha sıkı doğrulama için <code>zod</code> ile payload kontrolü,
+        <code>NextResponse</code> hata kodları ve rate limit eklentisi önerilir.
+      </p>
+    </section>
+
+    <section id="swagger">
+      <h2>Swagger / OpenAPI Entegrasyonu</h2>
+      <p>
+        OpenAPI şemasını programatik üreterek Swagger UI ile sunabilirsiniz.
+        App Router altında statik JSON endpoint + Swagger UI route örneği:
+      </p>
+      <pre><code>// src/app/api/openapi/route.ts
+import { NextResponse } from "next/server";
+import { openApiSchema } from "@/lib/openapi"; // zod-to-openapi vb.
+
+export async function GET() {
+  return NextResponse.json(openApiSchema, {
+    headers: { "Cache-Control": "public, max-age=300" },
+  });
+}
+
+// src/app/docs/swagger/page.tsx
+import SwaggerUI from "swagger-ui-react";
+import "swagger-ui-react/swagger-ui.css";
+
+export default function SwaggerPage() {
+  return &lt;SwaggerUI url="/api/openapi" docExpansion="list" />;
+}</code></pre>
+      <p>
+        GitHub Pages statik olduğu için Next.js yönlendirmesi veya standalone build
+        ile barındırma tercih edilmeli. Eğer sadece dokümantasyon yayınlanacaksa
+        Swagger UI'yı statik HTML olarak da ekleyebilirsiniz.
+      </p>
+    </section>
+
+    <section id="veritabani">
+      <h2>Veritabanı Seçenekleri</h2>
+      <p>
+        Farklı ortamlara göre hızlı bağlantı önerileri. Edge uyumu, TCP kısıtı ve havuzlama dikkate alın.
+      </p>
+      <div class="grid">
+        <div class="card">
+          <strong>PostgreSQL (varsayılan)</strong>
+          <ul>
+            <li>Production: pgbouncer (transaction mode) + Prisma Accelerate/Data Proxy</li>
+            <li>Local: <code>DATABASE_URL="postgresql://user:pass@localhost:5432/db"</code></li>
+            <li>Test: <code>dotenv -e .env.test prisma migrate deploy</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>MySQL / MariaDB</strong>
+          <ul>
+            <li>SSL zorunluluğu için <code>?sslaccept=strict</code> parametrelerini ekle</li>
+            <li>Edge için Data Proxy kullan; native driver edge'de çalışmaz</li>
+            <li>Migration: <code>npx prisma migrate dev --create-only</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>SQLite</strong>
+          <ul>
+            <li>Hafif kullanım, prototip veya uç noktalarda cache için</li>
+            <li>Serverless'ta dosya tabanlı olduğu için yazma yükü sınırlı</li>
+            <li>CI'da hızlı: <code>DATABASE_URL="file:./dev.db"</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>MongoDB</strong>
+          <ul>
+            <li><code>npx prisma init --datasource-provider mongodb</code></li>
+            <li>Edge uyumu için Data Proxy; aksi halde TCP kısıtı</li>
+            <li>Schema olmayan dokümanlar için DTO katmanı şart</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="deploy">
+      <h2>GitHub Pages Yayını</h2>
+      <ul>
+        <li><code>next export</code> ile statik çıktı alıp <code>out/</code> klasörünü Pages'a verin.</li>
+        <li><code>assetPrefix</code> ve <code>basePath</code> ayarlarını repo adına göre güncelleyin.</li>
+        <li>CI adımı: <code>npm run build && npm run export</code> sonrası <code>out</code> klasörünü dağıtın.</li>
+        <li>API çağrıları gerekiyorsa: Vercel/Render gibi dinamik ortamı Pages ile birlikte düşünün.</li>
+      </ul>
+      <a class="cta" href="https://nextjs.org/docs/pages/building-your-application/deploying/static-exports" target="_blank" rel="noreferrer">
+        Next.js Static Export Rehberi
+      </a>
+    </section>
+
+    <section id="node-express">
+      <h2>Node.js / Express (Planlanan)</h2>
+      <p>
+        İleride aynı dokümana Express.js bölümü eklemek için menüde yer ayrıldı.
+        Plan: ortak DTO/şema paylaşımı, OpenAPI uyumu, Next.js ile shared component/utility
+        katmanı ve Swagger UI'nın her iki servis için aynı şema kaynağından üretilmesi.
+      </p>
+      <ul>
+        <li>Ortak <code>packages/validators</code> veya <code>src/lib/validation</code></li>
+        <li>Express için <code>express-openapi-validator</code> entegrasyonu</li>
+        <li>API versiyonlama: <code>/api/v1</code>, <code>/api/v2</code></li>
+      </ul>
+    </section>
+  </main>
+
+  <script>
+    const links = Array.from(document.querySelectorAll("nav a"));
+    const sections = links.map(link => document.querySelector(link.getAttribute("href")));
+
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            links.forEach(link => link.classList.toggle("active", link.getAttribute("href") === "#" + entry.target.id));
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -50% 0px", threshold: 0.4 }
+    );
+
+    sections.forEach(section => section && observer.observe(section));
+  </script>
+</body>
+</html>
