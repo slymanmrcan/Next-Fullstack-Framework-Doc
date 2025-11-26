@@ -214,6 +214,7 @@
     <h2>Menü</h2>
     <a href="#giris" class="active">Giriş</a>
     <a href="#yapilacaklar">Ne Yapılır / Ne Yapılmaz</a>
+    <a href="#starter">Starter / Template</a>
     <a href="#mimari">Mimari Yapı</a>
     <a href="#fs-routing">Dosya Sistemi & Routing</a>
     <a href="#lifecycle">Lifecycle & Middleware</a>
@@ -255,10 +256,13 @@
             <li>Prisma Client'ı tekil instance ile paylaş</li>
             <li>Observability: request-id, log context, basic metrics</li>
             <li>CORS & rate limit: middleware ile erken reddet</li>
+            <li>Multi-tenant: subdomain/claim bazlı auth + <code>tenantId</code> filter veya RLS; gerekirse schema-per-tenant</li>
+            <li>Role/scope: <code>user_roles</code> + policy fonksiyonları (<code>canEditProject</code>) ile kodlanmış kurallar</li>
           </ul>
           <p style="margin:8px 0 0;color:var(--muted);">
             Örnek akış: <code>src/app/(public)/page.tsx</code> (landing), <code>src/app/api/posts/route.ts</code> (CRUD API),
             <code>src/app/dashboard/page.tsx</code> (korumalı panel) hepsi tek repo ve dosya tabanlı routing ile.
+            Multi-tenant için <code>src/app/(tenant)/[tenant]/dashboard/page.tsx</code> veya claim bazlı yönlendirme kullan.
           </p>
         </div>
         <div class="card">
@@ -269,6 +273,47 @@
             <li>API içinde blocking uzun işler (queue'ya offload et)</li>
             <li>Her istek için yeni PrismaClient açmak</li>
             <li>Edge runtime'da native driver kullanmak (destek yoksa)</li>
+            <li>Multi-tenant'ı <code>if (tenant === "...")</code> bloklarıyla dallandırmak; filtreyi unutarak veri sızdırmak</li>
+            <li>"Clean architecture" bahanesiyle aşırı soyutlama/katman ekleyip bakım yükü yaratmak</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="starter">
+      <h2>Starter / Template Seçenekleri</h2>
+      <p>Kurulumda vakit kazandıracak, App Router uyumlu, full-stack odaklı starter örnekleri.</p>
+      <div class="grid">
+        <div class="card">
+          <strong>Next.js Official Starter</strong>
+          <ul>
+            <li><code>npx create-next-app@latest --typescript --eslint --app --src-dir --import-alias "@/*"</code></li>
+            <li>Varsayılan: Tailwind opsiyonel, jest/eslint hazır</li>
+            <li>Pages yerine App Router seçili (full-stack için ideal)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>T3-ish Stack (Light)</strong>
+          <ul>
+            <li>Next + tRPC (veya simple API route) + Prisma + NextAuth</li>
+            <li>Tailwind + Shadcn UI eklenebilir</li>
+            <li>Edge uyumu için tRPC handler'ı Node runtime'da tut</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Design-first Docs</strong>
+          <ul>
+            <li>Statik export için: MDX + Contentlayer / next-mdx-remote</li>
+            <li>Swagger UI'yı <code>/docs/swagger</code> route'unda sun</li>
+            <li>Pages/CI: <code>next export</code> + GitHub Pages</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Infra-Hazır (CI + Docker)</strong>
+          <ul>
+            <li>CI: lint + test + <code>next build</code> + <code>next export</code></li>
+            <li>Docker: multi-stage (deps/builder/runner) + Prisma generate</li>
+            <li>Env şeması: <code>zod</code> + <code>dotenv-flow</code> veya <code>@t3-oss/env-nextjs</code></li>
           </ul>
         </div>
       </div>
