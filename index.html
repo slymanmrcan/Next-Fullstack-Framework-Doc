@@ -215,10 +215,14 @@
     <a href="#giris" class="active">Giriş</a>
     <a href="#yapilacaklar">Ne Yapılır / Ne Yapılmaz</a>
     <a href="#starter">Starter / Template</a>
+    <a href="#quickstart">Hızlı Başlangıç</a>
+    <a href="#compat">Versiyon Uyumu</a>
+    <a href="#tools">Faydalı Araçlar</a>
     <a href="#mimari">Mimari Yapı</a>
     <a href="#fs-routing">Dosya Sistemi & Routing</a>
     <a href="#lifecycle">Lifecycle & Middleware</a>
     <a href="#prisma">Prisma & API</a>
+    <a href="#orm">Alternatif ORM / Query Builder</a>
     <a href="#auth">Kimlik Doğrulama</a>
     <a href="#endpoint">Endpoint Tanımı</a>
     <a href="#swagger">Swagger / OpenAPI</a>
@@ -243,6 +247,55 @@
         <span class="pill">Swagger/OpenAPI</span>
         <span class="pill">PostgreSQL</span>
       </div>
+    </section>
+
+    <section id="quickstart">
+      <h2>Hızlı Başlangıç</h2>
+      <div class="grid">
+        <div class="card">
+          <strong>1) Projeyi oluştur</strong>
+          <ul>
+            <li>Gereksinim: Node 18+ (LTS) ve pnpm/npm/yarn</li>
+            <li><code>npx create-next-app@latest --typescript --eslint --app --src-dir --import-alias "@/*"</code></li>
+            <li>UI: Tailwind eklemek istersen <code>npm i -D tailwindcss postcss autoprefixer</code> + <code>npx tailwindcss init -p</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>2) Env şemasını hazırla</strong>
+          <ul>
+            <li><code>npm i @t3-oss/env-nextjs zod</code></li>
+            <li><code>src/env.mjs</code> içinde zorunlu değişkenleri tanımla</li>
+            <li>Örnek: <code>DATABASE_URL</code>, <code>NEXTAUTH_SECRET</code>, <code>APP_URL</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>3) DB & ORM ekle</strong>
+          <ul>
+            <li>Prisma: <code>npm i prisma @prisma/client</code> + <code>npx prisma init --datasource-provider postgresql</code></li>
+            <li><code>src/lib/prisma.ts</code> tekil client örneği oluştur</li>
+            <li><code>npx prisma migrate dev --name init</code> ile ilk şema</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>4) İlk API & UI</strong>
+          <ul>
+            <li><code>src/app/api/posts/route.ts</code> içine basit GET/POST (örnek yukarıda)</li>
+            <li><code>src/app/page.tsx</code> içinde server component, data fetch veya server action</li>
+            <li>Client form gerekiyorsa <code>"use client"</code> + Formik/Zustand/TanStack Query kullan</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>5) Çalıştır & Yayınla</strong>
+          <ul>
+            <li>Dev: <code>npm run dev</code></li>
+            <li>Build: <code>next.config.js</code> → <code>output: "export"</code> (Pages için) ve <code>npm run build</code></li>
+            <li>Deploy: <code>out/</code> klasörünü GitHub Pages veya statik host'a ver</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:12px;color:var(--muted);">
+        Opsiyonel hızlı ekler: auth (NextAuth.js), middleware ile rate limit/CORS, logger + request-id, Playwright ile 1-2 smoke testi ve CI'da <code>npm run lint && npm run build</code>.
+      </p>
     </section>
 
     <section id="yapilacaklar">
@@ -308,20 +361,110 @@
           <ul>
             <li>Statik export için: MDX + Contentlayer / next-mdx-remote</li>
             <li>Swagger UI'yı <code>/docs/swagger</code> route'unda sun</li>
-            <li>Pages/CI: <code>next export</code> + GitHub Pages</li>
+            <li>Pages/CI: <code>output: "export"</code> + <code>next build</code> + GitHub Pages</li>
             <li>Kurulum: <code>npm i next-mdx-remote gray-matter</code> veya <code>npm i contentlayer next-contentlayer</code></li>
           </ul>
         </div>
         <div class="card">
           <strong>Infra-Hazır (CI + Docker)</strong>
           <ul>
-            <li>CI: lint + test + <code>next build</code> + <code>next export</code></li>
+            <li>CI: lint + test + <code>next build</code> (<code>output: "export"</code>)</li>
             <li>Docker: multi-stage (deps/builder/runner) + Prisma generate</li>
             <li>Env şeması: <code>zod</code> + <code>dotenv-flow</code> veya <code>@t3-oss/env-nextjs</code></li>
             <li>Kurulum: <code>npm i -D eslint prettier</code> + <code>npm i prisma @prisma/client</code> + Dockerfile'ı ekle</li>
           </ul>
         </div>
       </div>
+    </section>
+
+    <section id="compat">
+      <h2>Versiyon Uyumu ve Minimum Gereksinimler</h2>
+      <p>Yeni Next.js App Router projeleri için önerilen sürümler ve dikkat edilmesi gereken uyumluluklar.</p>
+      <div class="grid">
+        <div class="card">
+          <strong>Framework & Runtime</strong>
+          <ul>
+            <li>Next.js 14/15 (App Router) + React 18.3+</li>
+            <li>Node.js 18.17+ (LTS) veya 20 (Vercel default)</li>
+            <li>TypeScript 5.3+ (metadata & server actions uyumu için)</li>
+            <li>Static export: <code>next.config.js</code> → <code>output: "export"</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>ORM & DB</strong>
+          <ul>
+            <li>Prisma 5.x (Node 18+; Data Proxy/Accelerate edge için)</li>
+            <li>Drizzle 0.30+ (SQL dialect driver'larını güncel tut)</li>
+            <li>TypeORM 0.3.x (Reflect-metadata zorunlu, ES2022 hedefle)</li>
+            <li>SQLite için uçta yazma limitlerine dikkat; prod'da Postgres/MySQL</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Build & Test</strong>
+          <ul>
+            <li>Playwright 1.41+ (Node 18+); Jest 29+ veya Vitest 1+</li>
+            <li>ESLint 8/9 + Next eslint config; Prettier 3</li>
+            <li>CI Node sürümünü <code>package.json</code> <code>engines</code> ile kilitle</li>
+            <li>Edge hedefleniyorsa npm paketlerinin ESM/edge desteğini kontrol et</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Dev/Deploy Uyum</strong>
+          <ul>
+            <li>Vercel: Node 18/20, App Router destekli; <code>prisma generate</code> build'de</li>
+            <li>Docker: <code>node:20-alpine</code> + <code>npm ci</code> + <code>next build</code></li>
+            <li>GitHub Pages: <code>output: "export"</code> + <code>assetPrefix/basePath</code></li>
+            <li>Env şeması: <code>zod</code> veya <code>@t3-oss/env-nextjs</code> ile doğrula</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="tools">
+      <h2>Faydalı Araçlar (Form, State, Data)</h2>
+      <p>Kurulum ve kullanım yerleriyle sık kullanılan yardımcı kütüphaneler.</p>
+      <div class="grid">
+        <div class="card">
+          <strong>Formik + Yup</strong>
+          <ul>
+            <li>Kurulum: <code>npm i formik yup</code></li>
+            <li>Kullanım: Client component içinde <code>useFormik</code> ile form state; <code>validationSchema</code> için Yup</li>
+            <li>Örnek: <code>onSubmit</code> içinde server action veya fetch POST</li>
+            <li>Not: CSR olduğundan form sayfasını <code>"use client"</code> ile işaretle</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Zustand</strong>
+          <ul>
+            <li>Kurulum: <code>npm i zustand</code></li>
+            <li>Kullanım: <code>const useStore = create(...) </code> client bileşenlerde çağır</li>
+            <li>Persist için: <code>import { persist } from "zustand/middleware"</code></li>
+            <li>Server component'ta doğrudan kullanma; client wrapper oluştur</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>TanStack Query</strong>
+          <ul>
+            <li>Kurulum: <code>npm i @tanstack/react-query</code></li>
+            <li>Kullanım: <code>QueryClientProvider</code> ile client layout; <code>useQuery</code>/<code>useMutation</code> UI'da</li>
+            <li>SSR/Prefetch: Route handler veya server action ile cache'i hydrate et</li>
+            <li>Refetch & cache policy'yi App Router <code>revalidate</code> kurallarıyla hizala</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Form/State Alternatifleri</strong>
+          <ul>
+            <li>React Hook Form + Zod: hafif, controlled/ uncontrolled karma kullanım</li>
+            <li>Jotai/Valtio: minimal state seçenekleri</li>
+            <li>Immer: immutable güncellemeler için <code>npm i immer</code></li>
+            <li>Redux Toolkit: kurulum <code>npm i @reduxjs/toolkit react-redux</code>, RTK Query dahil</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:12px;color:var(--muted);">
+        Form/state kütüphanelerini client component'lara, veri erişimi/validasyonu ve business logic'i
+        server action veya API route'lara koyarak SSR/SEO avantajını koruyun.
+      </p>
     </section>
 
     <section id="mimari">
@@ -460,6 +603,53 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;</cod
       <p>
         Ortak <code>prisma</code> örneğini import ederek API route'larda kullanın. Edge runtime
         planlanıyorsa Prisma'nın Data Proxy veya Accelerate desteği değerlendirilmeli.
+      </p>
+    </section>
+
+    <section id="orm">
+      <h2>Alternatif ORM / Query Builder Seçenekleri</h2>
+      <p>Prisma dışında Next.js ile yaygın kullanılan, Node runtime uyumlu birkaç seçenek:</p>
+      <div class="grid">
+        <div class="card">
+          <strong>Drizzle ORM</strong>
+          <ul>
+            <li>SQL-first; edge uyumlu adaptor'lar</li>
+            <li>Schema tanımı TypeScript ile yapılır</li>
+            <li>CLI: <code>npm i drizzle-orm</code> + <code>drizzle-kit</code></li>
+            <li>Migration: <code>drizzle-kit generate</code> → <code>drizzle-kit push</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>TypeORM</strong>
+          <ul>
+            <li>Decorator tabanlı entity tanımı</li>
+            <li>Active Record veya Data Mapper seçilebilir</li>
+            <li>CLI: <code>npm i typeorm reflect-metadata</code></li>
+            <li>Migration: <code>typeorm migration:generate -n init</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Sequelize</strong>
+          <ul>
+            <li>Yıllanmış ve stabil; hook ve model tabanlı</li>
+            <li>Dialect desteği geniş (Postgres/MySQL/SQLite)</li>
+            <li>CLI: <code>npm i sequelize sequelize-cli</code></li>
+            <li>Migration: <code>npx sequelize-cli db:migrate</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Kysely (Query Builder)</strong>
+          <ul>
+            <li>Minimal, tip güvenli SQL builder</li>
+            <li>ORM yerine hafif abstraction isteyenler için</li>
+            <li>CLI yok; migration için <code>kysely-codegen</code> veya <code>umzug</code> kullan</li>
+            <li>Edge uyumu: Postgres/Mysql driver'larında TCP kısıtına dikkat</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:12px;color:var(--muted);">
+        Prisma tercih edilmiyorsa migration/seed adımlarını CI'da tanımlamayı unutmayın. Edge ortamlarında
+        native driver gerektiren ORM'lerde Data Proxy benzeri çözümler veya HTTP tabanlı bağlantılar gerekebilir.
       </p>
     </section>
 
@@ -660,9 +850,9 @@ CMD ["node", "server.js"]</code></pre>
     <section id="deploy">
       <h2>GitHub Pages Yayını</h2>
       <ul>
-        <li><code>next export</code> ile statik çıktı alıp <code>out/</code> klasörünü Pages'a verin.</li>
+        <li><code>next.config.js</code> içinde <code>output: "export"</code> ayarlayıp <code>next build</code> çıktısı olan <code>out/</code> klasörünü Pages'a verin.</li>
         <li><code>assetPrefix</code> ve <code>basePath</code> ayarlarını repo adına göre güncelleyin.</li>
-        <li>CI adımı: <code>npm run build && npm run export</code> sonrası <code>out</code> klasörünü dağıtın.</li>
+        <li>CI adımı: <code>npm run build</code> (<code>output: "export"</code>) sonrası <code>out</code> klasörünü dağıtın.</li>
         <li>API çağrıları gerekiyorsa: Vercel/Render gibi dinamik ortamı Pages ile birlikte düşünün.</li>
       </ul>
       <a class="cta" href="https://nextjs.org/docs/pages/building-your-application/deploying/static-exports" target="_blank" rel="noreferrer">
