@@ -159,6 +159,23 @@
       background: linear-gradient(145deg, rgba(34,211,238,0.08), rgba(12, 18, 28, 0.9));
       border: 1px solid var(--border);
     }
+    .plain-list .grid {
+      display: block;
+    }
+    .plain-list .card {
+      background: none;
+      border: none;
+      padding: 0;
+      box-shadow: none;
+    }
+    .plain-list h3 {
+      margin: 18px 0 8px;
+      font-size: 18px;
+    }
+    .plain-list ul {
+      padding-left: 20px;
+      color: var(--muted);
+    }
     .tagged {
       display: inline-flex;
       gap: 8px;
@@ -839,12 +856,12 @@ export default function SwaggerPage() {
       </div>
     </section>
 
-    <section id="veritabani-karsilastirma">
+    <section id="veritabani-karsilastirma" class="plain-list">
       <h2>Veritabanı Karşılaştırma (Mühendislik Özeti)</h2>
       <p>PostgreSQL, MSSQL, Oracle ve MySQL/MariaDB için dil, MVCC/locking, ekosistem ve Next.js/Node uyumu.</p>
       <div class="grid">
         <div class="card">
-          <strong>PostgreSQL</strong>
+          <h3>PostgreSQL</h3>
           <ul>
             <li>Dil: C; SQL: ANSI + PL/pgSQL, PL/Java/Python destekli</li>
             <li>MVCC: gerçek MVCC; vacuum gerektirir; yüksek concurrency iyi</li>
@@ -853,7 +870,7 @@ export default function SwaggerPage() {
           </ul>
         </div>
         <div class="card">
-          <strong>Microsoft SQL Server (MSSQL)</strong>
+          <h3>Microsoft SQL Server (MSSQL)</h3>
           <ul>
             <li>Dil: C++; SQL: T-SQL (procedural, window functions zengin)</li>
             <li>MVCC: varsayılan lock; <code>READ_COMMITTED_SNAPSHOT</code> ile row-versioning</li>
@@ -862,7 +879,7 @@ export default function SwaggerPage() {
           </ul>
         </div>
         <div class="card">
-          <strong>Oracle Database</strong>
+          <h3>Oracle Database</h3>
           <ul>
             <li>Dil: C; SQL: PL/SQL (paket, trigger, advanced cursor)</li>
             <li>MVCC: undo segment tabanlı; uzun transaction toleransı yüksek</li>
@@ -871,7 +888,7 @@ export default function SwaggerPage() {
           </ul>
         </div>
         <div class="card">
-          <strong>MySQL / MariaDB</strong>
+          <h3>MySQL / MariaDB</h3>
           <ul>
             <li>Dil: C/C++; SQL: MySQL dialect (procedure, trigger, event, limited window funcs)</li>
             <li>MVCC: InnoDB row-versioning; metadata lock'lara dikkat</li>
@@ -884,7 +901,7 @@ export default function SwaggerPage() {
         Kısa seçim rehberi: Web/SaaS için PostgreSQL (özgür, güçlü JSONB, community), MS stack entegrasyonu ve T-SQL araçları için MSSQL, mevcut Oracle lisansı/RAC ihtiyacı için Oracle, hafif/ucuz barındırma veya MySQL uyumlu managed servisler için MySQL/MariaDB.
       </p>
       <div class="card" style="margin-top:12px;">
-        <strong>Dil/Dialekt Odaklı Test Case Örnekleri</strong>
+        <h3>Dil/Dialekt Odaklı Test Case Örnekleri</h3>
         <ul>
           <li><em>JSON işleme (PostgreSQL, PL/pgSQL):</em> JSONB index + <code>SELECT data->>'event' FROM logs WHERE data @> '{"userId":123}'</code>; performans ve plan kontrolü.</li>
           <li><em>Pipelined ETL (MSSQL, T-SQL):</em> <code>OPENJSON</code> ile staging tablosu doldur, Columnstore index ile sorgu süresini ölç; lock wait monitörü.</li>
@@ -895,12 +912,12 @@ export default function SwaggerPage() {
       </div>
     </section>
 
-    <section id="uygulama-senaryolari">
+    <section id="uygulama-senaryolari" class="plain-list">
       <h2>Uygulama Senaryoları (Yazılım)</h2>
       <p>Framework/driver/cache/queue tercihleri ile uygulama odaklı karar rehberi.</p>
       <div class="grid">
         <div class="card">
-          <strong>Hangi İşte Hangisi Tercih Edilir?</strong>
+          <h3>Hangi İşte Hangisi Tercih Edilir?</h3>
           <ul>
             <li><em>SaaS ürün + event log + JSON payload yoğun:</em> PostgreSQL (JSONB + GIN), Prisma, Redis cache; edge gerekirse Accelerate/Data Proxy.</li>
             <li><em>Microsoft ekosistemi + PowerBI/SSRS raporlama:</em> MSSQL (T-SQL, Columnstore), <code>mssql</code> driver; SSIS/SSRS/PowerBI entegrasyonu.</li>
@@ -910,7 +927,7 @@ export default function SwaggerPage() {
           </ul>
         </div>
         <div class="card">
-          <strong>Uygulama Odaklı 5 Senaryo (Detaylı)</strong>
+          <h3>Uygulama Odaklı 5 Senaryo (Detaylı)</h3>
           <ul>
             <li><em>Instagram benzeri feed, 1.000 eşzamanlı:</em> PostgreSQL + read replicas, JSONB/GIN denormalize feed; cache (Redis) + logical replication; pgbouncer ile 50-100 connection.</li>
             <li><em>Finans/çekirdek işlem (ACID + audit):</em> Oracle veya PostgreSQL; Oracle RAC/DataGuard + PL/SQL audit, PostgreSQL WAL archive + PITR, serializable isolation.</li>
