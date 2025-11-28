@@ -213,9 +213,9 @@
   <nav aria-label="İçindekiler">
     <h2>Menü</h2>
     <a href="#giris" class="active">Giriş</a>
+    <a href="#quickstart">Hızlı Başlangıç</a>
     <a href="#yapilacaklar">Ne Yapılır / Ne Yapılmaz</a>
     <a href="#starter">Starter / Template</a>
-    <a href="#quickstart">Hızlı Başlangıç</a>
     <a href="#compat">Versiyon Uyumu</a>
     <a href="#tools">Faydalı Araçlar</a>
     <a href="#mimari">Mimari Yapı</a>
@@ -227,6 +227,8 @@
     <a href="#endpoint">Endpoint Tanımı</a>
     <a href="#swagger">Swagger / OpenAPI</a>
     <a href="#veritabani">Veritabanı Seçenekleri</a>
+    <a href="#veritabani-karsilastirma">Veritabanı Karşılaştırma</a>
+    <a href="#uygulama-senaryolari">Uygulama Senaryoları (Yazılım)</a>
     <a href="#docker">Docker Build</a>
     <a href="#deploy">GitHub Pages Yayını</a>
     <a href="#node-express">Node.js / Express (sonraki)</a>
@@ -769,23 +771,52 @@ export default function SwaggerPage() {
     <section id="veritabani">
       <h2>Veritabanı Seçenekleri</h2>
       <p>
-        Farklı ortamlara göre hızlı bağlantı önerileri. Edge uyumu, TCP kısıtı ve havuzlama dikkate alın.
+        Farklı ortamlara göre hızlı bağlantı önerileri. Her DB'nin dili/kökeni, bağlantı örneği ve Next.js/edge uyumu için kısa notlar.
       </p>
       <div class="grid">
         <div class="card">
           <strong>PostgreSQL (varsayılan)</strong>
           <ul>
-            <li>Production: pgbouncer (transaction mode) + Prisma Accelerate/Data Proxy</li>
-            <li>Local: <code>DATABASE_URL="postgresql://user:pass@localhost:5432/db"</code></li>
+            <li>C ile yazılmış, açık kaynak; geniş eklenti ve JSONB desteği</li>
+            <li>Prod: pgbouncer (transaction mode) + Prisma Accelerate/Data Proxy</li>
+            <li>Local DSN: <code>postgresql://user:pass@localhost:5432/db</code></li>
             <li>Test: <code>dotenv -e .env.test prisma migrate deploy</code></li>
           </ul>
         </div>
         <div class="card">
-          <strong>MySQL / MariaDB</strong>
+          <strong>MySQL</strong>
           <ul>
-            <li>SSL zorunluluğu için <code>?sslaccept=strict</code> parametrelerini ekle</li>
-            <li>Edge için Data Proxy kullan; native driver edge'de çalışmaz</li>
+            <li>C/C++ ile, Oracle tarafından geliştirilen popüler RDBMS</li>
+            <li>DSN: <code>mysql://user:pass@localhost:3306/db</code></li>
+            <li>Edge: Data Proxy tercih et; native TCP driver edge'de çalışmaz</li>
             <li>Migration: <code>npx prisma migrate dev --create-only</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>MariaDB</strong>
+          <ul>
+            <li>MySQL fork'u, tamamen açık kaynak</li>
+            <li>DSN: <code>mysql://user:pass@localhost:3306/db</code> (aynı format)</li>
+            <li>SSL için: <code>?sslaccept=strict</code> ekle</li>
+            <li>Prisma için MariaDB provider'ını kullanmayı unutma</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Microsoft SQL Server (MSSQL)</strong>
+          <ul>
+            <li>C++ ile Microsoft geliştirmesi; Windows/Linux'ta çalışır</li>
+            <li>DSN: <code>sqlserver://user:pass@localhost:1433;database=db</code></li>
+            <li>Driver: Prisma MSSQL provider veya Node <code>tedious</code></li>
+            <li>Azure SQL için bağlantıda <code>encrypt=true</code> kullan</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Oracle Database</strong>
+          <ul>
+            <li>C ile yazılmış, kurumsal lisanslı</li>
+            <li>DSN: <code>oracle://user:pass@host:1521/service</code> (Instant Client gerekir)</li>
+            <li>Node için <code>oracledb</code> paketi; edge uyumlu değildir</li>
+            <li>Prisma: Oracle preview provider'ı takip edilmeli</li>
           </ul>
         </div>
         <div class="card">
@@ -799,9 +830,93 @@ export default function SwaggerPage() {
         <div class="card">
           <strong>MongoDB</strong>
           <ul>
-            <li><code>npx prisma init --datasource-provider mongodb</code></li>
+            <li>C++ ile yazılmış doküman veritabanı; JSON benzeri BSON</li>
+            <li>Prisma provider: <code>mongodb</code> (schema zorunlu değil)</li>
             <li>Edge uyumu için Data Proxy; aksi halde TCP kısıtı</li>
             <li>Schema olmayan dokümanlar için DTO katmanı şart</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="veritabani-karsilastirma">
+      <h2>Veritabanı Karşılaştırma (Mühendislik Özeti)</h2>
+      <p>PostgreSQL, MSSQL, Oracle ve MySQL/MariaDB için dil, MVCC/locking, ekosistem ve Next.js/Node uyumu.</p>
+      <div class="grid">
+        <div class="card">
+          <strong>PostgreSQL</strong>
+          <ul>
+            <li>Dil: C; SQL: ANSI + PL/pgSQL, PL/Java/Python destekli</li>
+            <li>MVCC: gerçek MVCC; vacuum gerektirir; yüksek concurrency iyi</li>
+            <li>Öne çıkan: JSONB, extension (PostGIS, pgvector), logical replication</li>
+            <li>Node/Next: <code>pg</code>/Prisma olgun; edge için Accelerate/Data Proxy</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Microsoft SQL Server (MSSQL)</strong>
+          <ul>
+            <li>Dil: C++; SQL: T-SQL (procedural, window functions zengin)</li>
+            <li>MVCC: varsayılan lock; <code>READ_COMMITTED_SNAPSHOT</code> ile row-versioning</li>
+            <li>Öne çıkan: Columnstore index, SSIS/SSRS/SSAS entegrasyonu, Always On</li>
+            <li>Node/Next: <code>tedious</code>/<code>mssql</code> driver; edge yok, Data Proxy yok</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Oracle Database</strong>
+          <ul>
+            <li>Dil: C; SQL: PL/SQL (paket, trigger, advanced cursor)</li>
+            <li>MVCC: undo segment tabanlı; uzun transaction toleransı yüksek</li>
+            <li>Öne çıkan: RAC/Data Guard, partitioning, flashback, parallel query</li>
+            <li>Node/Next: <code>oracledb</code> (Instant Client), edge uyumsuz; Prisma Oracle preview</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>MySQL / MariaDB</strong>
+          <ul>
+            <li>Dil: C/C++; SQL: MySQL dialect (procedure, trigger, event, limited window funcs)</li>
+            <li>MVCC: InnoDB row-versioning; metadata lock'lara dikkat</li>
+            <li>Öne çıkan: replikasyon kolay, JSON alan basit; MariaDB bazı fonksiyonlarda ayrışıyor</li>
+            <li>Node/Next: <code>mysql2</code>/Prisma; edge yok, Data Proxy (MySQL) önerilir</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:12px;color:var(--muted);">
+        Kısa seçim rehberi: Web/SaaS için PostgreSQL (özgür, güçlü JSONB, community), MS stack entegrasyonu ve T-SQL araçları için MSSQL, mevcut Oracle lisansı/RAC ihtiyacı için Oracle, hafif/ucuz barındırma veya MySQL uyumlu managed servisler için MySQL/MariaDB.
+      </p>
+      <div class="card" style="margin-top:12px;">
+        <strong>Dil/Dialekt Odaklı Test Case Örnekleri</strong>
+        <ul>
+          <li><em>JSON işleme (PostgreSQL, PL/pgSQL):</em> JSONB index + <code>SELECT data->>'event' FROM logs WHERE data @> '{"userId":123}'</code>; performans ve plan kontrolü.</li>
+          <li><em>Pipelined ETL (MSSQL, T-SQL):</em> <code>OPENJSON</code> ile staging tablosu doldur, Columnstore index ile sorgu süresini ölç; lock wait monitörü.</li>
+          <li><em>Partition + parallel query (Oracle, PL/SQL):</em> <code>PARTITION BY RANGE</code> tablo, <code>PARALLEL</code> hint ile raportlama; undo/flashback etkisini izle.</li>
+          <li><em>Online schema change (MySQL/MariaDB, MySQL dialect):</em> <code>ALTER TABLE ... ALGORITHM=INPLACE, LOCK=NONE</code> testi; metadata lock ve replika gecikmesini ölç.</li>
+          <li><em>Logical replication / CDC (PostgreSQL veya MSSQL):</em> PG için <code>pgoutput</code> veya wal2json, MSSQL için CDC ile snapshot tutarlılığını ve lag metriğini doğrula.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="uygulama-senaryolari">
+      <h2>Uygulama Senaryoları (Yazılım)</h2>
+      <p>Framework/driver/cache/queue tercihleri ile uygulama odaklı karar rehberi.</p>
+      <div class="grid">
+        <div class="card">
+          <strong>Hangi İşte Hangisi Tercih Edilir?</strong>
+          <ul>
+            <li><em>SaaS ürün + event log + JSON payload yoğun:</em> PostgreSQL (JSONB + GIN), Prisma, Redis cache; edge gerekirse Accelerate/Data Proxy.</li>
+            <li><em>Microsoft ekosistemi + PowerBI/SSRS raporlama:</em> MSSQL (T-SQL, Columnstore), <code>mssql</code> driver; SSIS/SSRS/PowerBI entegrasyonu.</li>
+            <li><em>Kurumsal core banking/telekom + RAC/partitioning ihtiyacı:</em> Oracle (PL/SQL, RAC/DataGuard, flashback), <code>oracledb</code>; lisans/Instant Client planı şart.</li>
+            <li><em>Hızlı büyüyen, yazma/okuma dengeli marketplace:</em> PostgreSQL (MVCC, logical replication) + Citus opsiyonu; pgbouncer, Redis cache, read replica.</li>
+            <li><em>Düşük maliyetli hosting / LAMP uyumu:</em> MySQL veya MariaDB (InnoDB), <code>mysql2</code>/Prisma; ProxySQL veya RDS read replica.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>Uygulama Odaklı 5 Senaryo (Detaylı)</strong>
+          <ul>
+            <li><em>Instagram benzeri feed, 1.000 eşzamanlı:</em> PostgreSQL + read replicas, JSONB/GIN denormalize feed; cache (Redis) + logical replication; pgbouncer ile 50-100 connection.</li>
+            <li><em>Finans/çekirdek işlem (ACID + audit):</em> Oracle veya PostgreSQL; Oracle RAC/DataGuard + PL/SQL audit, PostgreSQL WAL archive + PITR, serializable isolation.</li>
+            <li><em>ETL + analitik rapor:</em> MSSQL (OPENJSON + Columnstore) veya PostgreSQL + Citus/Timescale; staging → transform → fact/dim; SSIS/PowerBI için MSSQL avantajlı.</li>
+            <li><em>Multi-tenant B2B SaaS:</em> PostgreSQL RLS + <code>tenant_id</code> filter veya MSSQL security policy; Citus veya MSSQL elastic pool ile sharding; migration/seed tenant-aware.</li>
+            <li><em>Düşük bütçe CRUD + paylaşımlı hosting:</em> MySQL/MariaDB managed; InnoDB, BTREE index; online schema change <code>ALGORITHM=INPLACE</code>; driver <code>mysql2</code> + Prisma.</li>
           </ul>
         </div>
       </div>
